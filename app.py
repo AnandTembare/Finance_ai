@@ -8,8 +8,8 @@ from typing import Dict, List, Any
 
 # ── Page Config ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="FinWise Analytics | GCC Edition",
-    page_icon="📈",
+    page_title="FinWise Analytics | India Edition",
+    page_icon="🇮🇳",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -31,6 +31,7 @@ h1, h2, h3 { font-family: 'Space Mono', monospace; color: #00e5ff; }
 .stButton > button:hover { background: linear-gradient(135deg, #ff6b35, #ff3d00); transform: translateY(-2px); box-shadow: 0 8px 25px #ff6b3540; }
 .section-title { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 3px; color: #00e5ff; text-transform: uppercase; margin-bottom: 4px; }
 .hero-title { font-family: 'Space Mono', monospace; font-size: 42px; font-weight: 700; background: linear-gradient(135deg, #00e5ff, #00b0ff, #ff6b35); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; margin-bottom: 8px; }
+.tax-badge { display: inline-block; background: #00e67622; border: 1px solid #00e676; border-radius: 4px; padding: 2px 6px; font-size: 10px; color: #00e676; margin-left: 6px; vertical-align: middle; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -38,13 +39,12 @@ h1, h2, h3 { font-family: 'Space Mono', monospace; color: #00e5ff; }
 
 @st.cache_data(ttl=300)
 def get_market_data() -> Dict[str, Dict[str, float]]:
-    """Fetches live market indices, including GCC specific trackers."""
+    """Fetches live Indian market indices and core global indicators."""
     tickers = {
-        "TADAWUL (KSA)": "^TASI.SR", 
         "NIFTY 50": "^NSEI", 
-        "S&P 500": "^GSPC", 
-        "GOLD": "GC=F", 
-        "USD/AED": "AED=X",
+        "SENSEX": "^BSESN", 
+        "BANK NIFTY": "^NSEBANK", 
+        "GOLD (MCX)": "GC=F", 
         "USD/INR": "INR=X"
     }
     data = {}
@@ -62,19 +62,19 @@ def get_market_data() -> Dict[str, Dict[str, float]]:
     return data
 
 def calculate_investment_plan(income: float, risk: str) -> Dict[str, Any]:
-    """Calculates investment allocation using the 50/30/20 financial rule."""
+    """Calculates investment allocation with Indian taxation & instruments context."""
     needs, wants, savings = income * 0.50, income * 0.30, income * 0.20
     emergency_target = income * 6
-    emergency_monthly = min(savings * 0.3, income * 0.1) # Adaptive emergency capping
+    emergency_monthly = min(savings * 0.3, 5000)
     invest_amount = savings - emergency_monthly
 
     allocations = {}
     if risk == "Conservative (Low Risk)":
-        allocations = {"Sovereign Bonds/Sukuk": 0.40, "Fixed Deposits": 0.30, "Debt Funds": 0.20, "Gold ETF": 0.10}
+        allocations = {"Bank FDs / Liquid Funds": 0.40, "PPF / EPF (80C Tax Free)": 0.30, "Large Cap Mutual Funds": 0.20, "Sovereign Gold Bonds (SGB)": 0.10}
     elif risk == "Moderate (Medium Risk)":
-        allocations = {"Index Fund SIP": 0.35, "Balanced Funds": 0.25, "Sukuk/Bonds": 0.20, "Real Estate (REITs)": 0.15, "Gold ETF": 0.05}
+        allocations = {"Nifty 50 Index Fund": 0.35, "Flexi-Cap Mutual Funds": 0.25, "PPF / ELSS (Tax Saving)": 0.20, "Corporate Bonds": 0.15, "Gold ETF": 0.05}
     else:
-        allocations = {"Direct Equity": 0.40, "Small/Mid Cap SIP": 0.25, "Index Fund SIP": 0.20, "Gold ETF": 0.10, "Crypto Assets": 0.05}
+        allocations = {"Small/Mid Cap Mutual Funds": 0.40, "Direct Equity (Stocks)": 0.25, "Nifty Next 50 Index Fund": 0.20, "ELSS (Tax Saving)": 0.10, "High-Yield Crypto/Alts": 0.05}
 
     return {
         "needs": needs, "wants": wants, "savings": savings, 
@@ -83,7 +83,7 @@ def calculate_investment_plan(income: float, risk: str) -> Dict[str, Any]:
     }
 
 def calculate_compounding(monthly_contribution: float, years: int, annual_return_pct: float) -> List[Dict[str, float]]:
-    """Calculates compound interest projection matrix."""
+    """Calculates SIP compound interest projection matrix."""
     monthly_rate = annual_return_pct / 100 / 12
     data, corpus, invested = [], 0, 0
     for month in range(1, years * 12 + 1):
@@ -96,30 +96,23 @@ def calculate_compounding(monthly_contribution: float, years: int, annual_return
 # ── UI Rendering ──────────────────────────────────────────────────────────────
 
 st.markdown('<div class="hero-title">FinWise Analytics</div>', unsafe_allow_html=True)
-st.markdown('<div class="hero-subtitle">Enterprise Investment Strategy · GCC Market Intelligence</div>', unsafe_allow_html=True)
-
-# Localization Toggle
-currency_col, _ = st.columns([1, 5])
-with currency_col:
-    currency_selector = st.selectbox("Select Region", ["UAE (AED د.إ)", "India (INR ₹)"])
-    symbol = "AED " if "UAE" in currency_selector else "₹ "
-    default_salary = 15000 if "UAE" in currency_selector else 50000
+st.markdown('<div class="hero-subtitle">India-Focused Investment Strategy · Live NSE/BSE Market Data</div>', unsafe_allow_html=True)
 
 # Live Ticker
-st.markdown('<p class="section-title">Global & GCC Markets</p>', unsafe_allow_html=True)
+st.markdown('<p class="section-title">Live Indian Markets</p>', unsafe_allow_html=True)
 market = get_market_data()
 cols = st.columns(len(market))
 for i, (name, val) in enumerate(market.items()):
     with cols[i]:
-        if "USD" in name: 
-            st.metric(name, f"{val['price']:.3f}", f"{val['change']:+.2f}%", delta_color="inverse")
-        elif name == "GOLD": 
-            st.metric(name, f"${val['price']:,.0f}", f"{val['change']:+.2f}%")
+        if name == "USD/INR": 
+            st.metric(name, f"₹{val['price']:.2f}", f"{val['change']:+.2f}%", delta_color="inverse")
+        elif name == "GOLD (MCX)": 
+            st.metric(name, f"${val['price']:,.0f}/oz", f"{val['change']:+.2f}%")
         else: 
             st.metric(name, f"{val['price']:,.0f}", f"{val['change']:+.2f}%")
 st.markdown("---")
 
-tab1, tab2, tab3 = st.tabs(["💰 Strategy Planner", "📈 Compounding Engine", "🌍 Global Trend Tracker"])
+tab1, tab2, tab3 = st.tabs(["💰 Personal Strategy", "📈 SIP Compounding", "📈 Top NSE Stocks"])
 
 # ── TAB 1: Strategy ────────────────────────────────────────────────────────────
 with tab1:
@@ -127,17 +120,17 @@ with tab1:
     
     with col1:
         st.markdown('<p class="section-title">Client Profile</p>', unsafe_allow_html=True)
-        income = st.number_input(f"Monthly Income ({symbol})", min_value=1000, max_value=1000000, value=default_salary, step=1000)
+        income = st.number_input("Monthly In-Hand Salary (₹)", min_value=15000, max_value=2000000, value=50000, step=5000)
         risk = st.selectbox("Risk Appetite", ["Conservative (Low Risk)", "Moderate (Medium Risk)", "Aggressive (High Risk)"])
-        st.button("🚀 Calculate Strategy")
+        st.button("🚀 Generate Indian Portfolio")
 
     with col2:
         plan = calculate_investment_plan(income, risk)
         st.markdown('<p class="section-title">Budget Allocation (50/30/20)</p>', unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3)
-        c1.markdown(f'<div class="invest-card"><div class="invest-amount">{symbol}{plan["needs"]:,.0f}</div><div class="invest-label">🏠 Needs (50%)</div></div>', unsafe_allow_html=True)
-        c2.markdown(f'<div class="invest-card"><div class="invest-amount">{symbol}{plan["wants"]:,.0f}</div><div class="invest-label">🎯 Wants (30%)</div></div>', unsafe_allow_html=True)
-        c3.markdown(f'<div class="invest-card"><div class="invest-amount">{symbol}{plan["savings"]:,.0f}</div><div class="invest-label">💎 Savings (20%)</div></div>', unsafe_allow_html=True)
+        c1.markdown(f'<div class="invest-card"><div class="invest-amount">₹{plan["needs"]:,.0f}</div><div class="invest-label">🏠 Needs (50%)</div></div>', unsafe_allow_html=True)
+        c2.markdown(f'<div class="invest-card"><div class="invest-amount">₹{plan["wants"]:,.0f}</div><div class="invest-label">🎯 Wants (30%)</div></div>', unsafe_allow_html=True)
+        c3.markdown(f'<div class="invest-card"><div class="invest-amount">₹{plan["savings"]:,.0f}</div><div class="invest-label">💎 Savings (20%)</div></div>', unsafe_allow_html=True)
 
         fig = go.Figure(go.Pie(
             labels=list(plan['allocations'].keys()), 
@@ -147,46 +140,60 @@ with tab1:
         fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', font=dict(color='#e8eaf6'), height=280, margin=dict(t=10, b=10, l=10, r=10))
         st.plotly_chart(fig, width="stretch", config={'displayModeBar': False})
 
-    st.markdown("### 📊 Monthly Portfolio Breakdown")
-    alloc_data = [{"Asset Class": k, f"Monthly Allocation ({symbol})": f"{symbol}{plan['invest_amount']*v:,.0f}", "Weight": f"{int(v*100)}%"} for k, v in plan['allocations'].items()]
-    st.dataframe(pd.DataFrame(alloc_data), use_container_width=True, hide_index=True)
+    st.markdown("### 📊 Recommended SIP/Lumpsum Breakdown")
+    
+    # Custom HTML table for badges
+    table_html = "<table style='width:100%; text-align:left; border-collapse: collapse;'><tr><th style='padding:8px; border-bottom: 1px solid #1e3a5f; color: #90caf9;'>Asset Class</th><th style='padding:8px; border-bottom: 1px solid #1e3a5f; color: #90caf9;'>Monthly Amount (₹)</th><th style='padding:8px; border-bottom: 1px solid #1e3a5f; color: #90caf9;'>Weight</th></tr>"
+    for k, v in plan['allocations'].items():
+        badge = '<span class="tax-badge">Sec 80C</span>' if 'Tax' in k or 'PPF' in k or 'ELSS' in k else ''
+        table_html += f"<tr><td style='padding:8px; border-bottom: 1px solid #1e3a5f;'>{k} {badge}</td><td style='padding:8px; border-bottom: 1px solid #1e3a5f;'>₹{plan['invest_amount']*v:,.0f}</td><td style='padding:8px; border-bottom: 1px solid #1e3a5f;'>{int(v*100)}%</td></tr>"
+    table_html += "</table>"
+    st.markdown(table_html, unsafe_allow_html=True)
     
     months_to_target = math.ceil(plan['target']/plan['emergency_monthly']) if plan['emergency_monthly'] > 0 else 0
-    st.info(f"🏦 **Liquidity Goal:** Build {symbol}{plan['target']:,.0f} (6 months runway). Contributing {symbol}{plan['emergency_monthly']:,.0f}/mo reaches this in ~{months_to_target} months.")
+    st.info(f"🏦 **Emergency Liquid Fund:** Keep ₹{plan['target']:,.0f} (6 months expenses) in an FD or Liquid Mutual Fund. Contributing ₹{plan['emergency_monthly']:,.0f}/mo completes this in ~{months_to_target} months.")
 
 # ── TAB 2: Compounding ─────────────────────────────────────────────────────────
 with tab2:
     col1, col2 = st.columns([1, 2])
     with col1:
-        st.markdown('<p class="section-title">Projection Parameters</p>', unsafe_allow_html=True)
-        sip_amount = st.number_input(f"Monthly Investment ({symbol})", min_value=500, value=int(plan['invest_amount']), step=500)
+        st.markdown('<p class="section-title">SIP Parameters</p>', unsafe_allow_html=True)
+        sip_amount = st.number_input("Monthly SIP (₹)", min_value=500, value=int(plan['invest_amount']), step=500)
         years = st.slider("Duration (Years)", 1, 40, 15)
-        return_rate = st.slider("Expected Annual Return (%)", 4.0, 20.0, 10.0, 0.5)
+        return_rate = st.slider("Expected Annual Return (%)", 4.0, 25.0, 12.0, 0.5)
         
         data = calculate_compounding(sip_amount, years, return_rate)
         final = data[-1]
         st.markdown("---")
-        st.metric("💎 Projected Corpus", f"{symbol}{final['Corpus']:,}")
-        st.metric("💰 Capital Deployed", f"{symbol}{final['Invested']:,}")
+        st.metric("💎 Final Portfolio Value", f"₹{final['Corpus']:,}")
+        st.metric("💰 Total Invested", f"₹{final['Invested']:,}")
 
     with col2:
         df = pd.DataFrame(data)
         fig = go.Figure()
-        fig.add_trace(go.Bar(x=df['Year'], y=df['Invested'], name='Capital Deployed', marker_color='#1e3a5f'))
+        fig.add_trace(go.Bar(x=df['Year'], y=df['Invested'], name='Capital Invested', marker_color='#1e3a5f'))
         fig.add_trace(go.Bar(x=df['Year'], y=df['Gains'], name='Wealth Generated', marker_color='#00e5ff'))
-        fig.add_trace(go.Scatter(x=df['Year'], y=df['Corpus'], name='Total Portfolio Value', line=dict(color='#ff6b35', width=3)))
+        fig.add_trace(go.Scatter(x=df['Year'], y=df['Corpus'], name='Total Value', line=dict(color='#ff6b35', width=3)))
         fig.update_layout(barmode='stack', paper_bgcolor='rgba(0,0,0,0)', font=dict(color='#e8eaf6'), height=400, margin=dict(t=20, b=40, l=60, r=20))
         st.plotly_chart(fig, width="stretch", config={'displayModeBar': False})
 
-# ── TAB 3: Global Trends ───────────────────────────────────────────────────────
+# ── TAB 3: Indian Stocks ───────────────────────────────────────────────────────
 with tab3:
     col1, col2 = st.columns([1, 2])
     with col1:
-        st.markdown('<p class="section-title">Asset Tracker</p>', unsafe_allow_html=True)
-        assets = {"Saudi Tadawul": "^TASI.SR", "S&P 500": "^GSPC", "Nifty 50": "^NSEI", "Gold": "GC=F", "Crude Oil": "CL=F", "Bitcoin": "BTC-USD"}
-        selected = st.selectbox("Select Asset", list(assets.keys()))
+        st.markdown('<p class="section-title">NSE Bluechip Tracker</p>', unsafe_allow_html=True)
+        assets = {
+            "Reliance Industries": "RELIANCE.NS",
+            "HDFC Bank": "HDFCBANK.NS",
+            "TCS": "TCS.NS",
+            "Infosys": "INFY.NS",
+            "Tata Motors": "TATAMOTORS.NS",
+            "State Bank of India (SBI)": "SBIN.NS",
+            "NIFTY 50 Index": "^NSEI"
+        }
+        selected = st.selectbox("Select Stock", list(assets.keys()))
         period = st.selectbox("Historical Timeframe", ["1mo", "3mo", "6mo", "1y", "5y"])
-        show = st.button("📊 Render Technical Chart")
+        show = st.button("📊 Render Chart")
     with col2:
         if show:
             hist = yf.Ticker(assets[selected]).history(period=period)
