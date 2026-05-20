@@ -1,139 +1,63 @@
-# FinWise AI — Investment Strategy & Market Intelligence App
-## Built by Anand Tembare | Python + Streamlit + Claude API
+# FinWise India
 
----
+FinWise India is a polished Streamlit app for India-focused personal finance education. It demonstrates portfolio planning, EMI-vs-SIP comparisons, simplified Indian capital-gains tax estimates, Section 80C / ELSS planning, live market snapshots, and configurable broker links.
 
-## STEP 1 — Install Python
-1. Go to python.org → Download Python 3.11+
-2. During install → CHECK "Add Python to PATH"
-3. Open Command Prompt → type: python --version
-   Should show: Python 3.11.x ✅
+> This is an educational portfolio project. It is not personalized investment advice, research advice, tax advice, or a SEBI-registered advisory service.
 
----
+## Highlights
 
-## STEP 2 — Install VS Code
-1. Go to code.visualstudio.com → Download
-2. Install with all default settings
-3. Open VS Code
-4. Install Extensions (left sidebar → Extensions icon):
-   - Python (by Microsoft)
-   - Pylance
-   - Python Indent
+- India-localized rupee formatting using lakh/crore style grouping.
+- Configurable car-loan, equity-return, debt-return, FD-return, and tax assumptions.
+- Simplified Section 112A equity LTCG estimate using a 12.5% default rate and ₹1.25 lakh annual exemption.
+- Section 80C / ELSS helper with old-tax-regime context and lock-in reminder.
+- SEBI-style risk disclosures and affiliate-link disclosure.
+- Live NIFTY 50, SENSEX, NIFTY BANK, S&P 500, GOLD, and USD/INR snapshot via Yahoo Finance.
+- Responsive dark UI with keyboard-focus states, clear labels, chart captions, and high contrast.
+- Broker links configurable from Streamlit secrets or environment variables.
 
----
+## Run locally
 
-## STEP 3 — Open Project in VS Code
-1. Open VS Code
-2. File → Open Folder → Select the "finance_app" folder
-3. You will see all files in left sidebar
-
----
-
-## STEP 4 — Open Terminal in VS Code
-Press: Ctrl + ` (backtick key — top left of keyboard)
-A terminal opens at bottom of VS Code
-
----
-
-## STEP 5 — Install Dependencies
-In the VS Code terminal, type these one by one:
-
-```
-pip install streamlit
-pip install anthropic
-pip install yfinance
-pip install plotly
-pip install pandas
-pip install requests
-```
-
-OR install all at once:
-```
+```bash
 pip install -r requirements.txt
-```
-
----
-
-## STEP 6 — Get Your Anthropic API Key
-1. Go to console.anthropic.com
-2. Sign up / Login
-3. Click "API Keys" → "Create Key"
-4. Copy the key (starts with sk-ant-...)
-
----
-
-## STEP 7 — Add Your API Key
-In VS Code, open the file: .streamlit/secrets.toml
-Replace "your-anthropic-api-key-here" with your actual key:
-
-```
-ANTHROPIC_API_KEY = "sk-ant-api03-xxxxxxxxxxxxx"
-```
-
-ALSO — Set it as environment variable in terminal:
-Windows:  set ANTHROPIC_API_KEY=sk-ant-api03-xxxxxxxxxxxxx
-Mac/Linux: export ANTHROPIC_API_KEY=sk-ant-api03-xxxxxxxxxxxxx
-
----
-
-## STEP 8 — Run the App
-In VS Code terminal:
-```
 streamlit run app.py
 ```
 
-Browser opens automatically at: http://localhost:8501 ✅
+## Configure referral links
 
----
+Create `.streamlit/secrets.toml` locally, or add the same keys in Streamlit Community Cloud secrets:
 
-## STEP 9 — Deploy on Streamlit Cloud (FREE)
-1. Upload your code to GitHub (create free account at github.com)
-   - Create new repository called "finwise-ai"
-   - Upload all files EXCEPT secrets.toml
-2. Go to share.streamlit.io → Sign in with GitHub
-3. Click "New App" → Select your repository → Select app.py
-4. Under "Advanced Settings" → Secrets → Add:
-   ANTHROPIC_API_KEY = "your-key-here"
-5. Click Deploy → Get public URL!
-6. Add URL to your resume immediately ✅
+```toml
+ZERODHA_URL = "https://your-zerodha-link"
+GROWW_URL = "https://your-groww-link"
+UPSTOX_URL = "https://your-upstox-link"
+```
 
----
+If these are missing, the app falls back to each platform's public account-opening page.
 
-## APP FEATURES
-- Live market data: Nifty, Sensex, S&P 500, NASDAQ, Gold, USD/INR
-- Investment Planner: 50/30/20 budget rule + allocation chart
-- AI Financial Advisor: Claude API generates personalised advice
-- World News: AI-analysed global events + India market impact
-- Compounding Calculator: SIP growth with milestone table
-- Global Trend Tracker: Live charts for 13 assets
+## Deploy on Streamlit Community Cloud
 
----
+1. Push this folder to GitHub.
+2. Open Streamlit Community Cloud and choose the repository.
+3. Set the main file path to `app.py`.
+4. Add referral links under app secrets if needed.
+5. Deploy.
 
-## RESUME BULLET POINTS (copy these)
-• Built FinWise AI — an end-to-end investment analytics web app using Python,
-  Streamlit and Claude API that generates personalised investment plans based on
-  salary and risk profile using the 50/30/20 rule, tracks live global market data
-  (Nifty, S&P 500, Gold, USD/INR), delivers AI-powered financial news impact
-  analysis, and visualises SIP compounding growth — deployed live on Streamlit Cloud.
+## India-specific assumptions
 
----
+The app intentionally keeps assumptions editable because actual outcomes depend on lender, credit profile, taxation status, fund category, holding period, and investor goals.
 
-## INTERVIEW TALKING POINTS
-Q: Tell me about your projects
-A: "I built FinWise AI — a personal investment advisor. The user enters their
-   salary and risk appetite. The app calculates their budget split using the
-   50/30/20 rule, recommends investment allocations across SIPs, FDs and equity,
-   and Claude API generates a personalised financial plan. It also tracks live
-   market data — Nifty, S&P 500, Gold — and analyses how global news like Fed
-   rate decisions and oil price changes affect Indian markets. I deployed it live
-   on Streamlit Cloud. This project directly applies the kind of financial data
-   analysis Morningstar does at scale."
+- Car-loan default is set to 8.75% as a realistic planning midpoint around recent Indian bank auto-loan starting rates.
+- Equity SIP return default is 11.0%, with reminders that past returns do not guarantee future returns.
+- Eligible listed equity / equity-oriented fund LTCG is modeled at 12.5% above the remaining ₹1.25 lakh annual exemption for transfers on or after 23 July 2024.
+- ELSS is shown as a Section 80C planning input with a 3-year lock-in reminder and old-tax-regime context.
 
----
+## Sources
 
-## TROUBLESHOOTING
-Error: "streamlit not found"    → Run: pip install streamlit
-Error: "anthropic not found"    → Run: pip install anthropic
-Error: "API key invalid"        → Check your key in secrets.toml
-Port already in use             → Run: streamlit run app.py --server.port 8502
-yfinance data not loading       → Check internet connection
+- [SEBI caution on registered investment advisers and research analysts](https://www.sebi.gov.in/media/press-releases/jun-2016/sebi-cautions-public-to-deal-with-only-sebi-registered-investment-advisers-and-research-analysts_32627.html)
+- [SEBI investor caution materials](https://investor.sebi.gov.in/cautiontoinvestor.html)
+- [Income-tax Act Section 112A](https://www.incometaxindia.gov.in/w/section-112a-59)
+- [PIB: Budget 2024 capital gains update](https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2035596)
+
+## Important disclaimer
+
+Mutual fund and securities market investments are subject to market risks. Read all scheme and related documents carefully before investing. The tax calculations are simplified and should be checked with a qualified tax professional before making investment or filing decisions.
