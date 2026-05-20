@@ -1,63 +1,46 @@
 # FinWise India
 
-FinWise India is a polished Streamlit app for India-focused personal finance education. It demonstrates portfolio planning, EMI-vs-SIP comparisons, simplified Indian capital-gains tax estimates, Section 80C / ELSS planning, live market snapshots, and configurable broker links.
+FinWise India is a futuristic Streamlit dashboard for Indian personal finance planning. The app first asks for income, expenses, savings, age, dependents, risk comfort, and priority. It then builds an interactive dashboard with cashflow analytics, profile scoring, investment split, asset-buying timelines, and long-term wealth projections.
 
-> This is an educational portfolio project. It is not personalized investment advice, research advice, tax advice, or a SEBI-registered advisory service.
+## Features
 
-## Highlights
+- First-screen investor questionnaire.
+- Paycent-inspired dark dashboard UI with glass cards, neon accents, and responsive layout.
+- Clickable dashboard views: Overview, Investment Plan, Asset Planner, and Analytics.
+- Personalized profile category such as Foundation Builder, Balanced Investor, Growth Investor, or Capital Protector.
+- Monthly investment allocation based on savings rate, emergency cover, age, dependents, and risk comfort.
+- SIP compounding table for 1, 3, 5, 10, 15, and 20-year projections.
+- Reinvested-compounding mode versus non-reinvested profit mode.
+- Free-form asset planner for home, car, phone, gold, or any custom goal.
+- Affordability warnings using practical Indian rules such as car 20/4/10 and EMI pressure checks.
+- Income target suggestions when a goal is too expensive for the current salary.
+- Statistical dashboard with savings rate, expense ratio, emergency months, medical buffer gap, EMI pressure, wealth projection, and allocation charts.
+- Live Indian market strip for NIFTY 50, SENSEX, NIFTY BANK, GOLD, and USD/INR.
 
-- India-localized rupee formatting using lakh/crore style grouping.
-- Configurable car-loan, equity-return, debt-return, FD-return, and tax assumptions.
-- Simplified Section 112A equity LTCG estimate using a 12.5% default rate and ₹1.25 lakh annual exemption.
-- Section 80C / ELSS helper with old-tax-regime context and lock-in reminder.
-- SEBI-style risk disclosures and affiliate-link disclosure.
-- Live NIFTY 50, SENSEX, NIFTY BANK, S&P 500, GOLD, and USD/INR snapshot via Yahoo Finance.
-- Responsive dark UI with keyboard-focus states, clear labels, chart captions, and high contrast.
-- Broker links configurable from Streamlit secrets or environment variables.
-
-## Run locally
+## Run Locally
 
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Configure referral links
-
-Create `.streamlit/secrets.toml` locally, or add the same keys in Streamlit Community Cloud secrets:
-
-```toml
-ZERODHA_URL = "https://your-zerodha-link"
-GROWW_URL = "https://your-groww-link"
-UPSTOX_URL = "https://your-upstox-link"
-```
-
-If these are missing, the app falls back to each platform's public account-opening page.
-
-## Deploy on Streamlit Community Cloud
+## Deploy On Streamlit Community Cloud
 
 1. Push this folder to GitHub.
-2. Open Streamlit Community Cloud and choose the repository.
-3. Set the main file path to `app.py`.
-4. Add referral links under app secrets if needed.
+2. Open Streamlit Community Cloud.
+3. Select this repository.
+4. Set the main file path to `app.py`.
 5. Deploy.
 
-## India-specific assumptions
+## Project Structure
 
-The app intentionally keeps assumptions editable because actual outcomes depend on lender, credit profile, taxation status, fund category, holding period, and investor goals.
+```text
+app.py
+requirements.txt
+.streamlit/config.toml
+README.md
+```
 
-- Car-loan default is set to 8.75% as a realistic planning midpoint around recent Indian bank auto-loan starting rates.
-- Equity SIP return default is 11.0%, with reminders that past returns do not guarantee future returns.
-- Eligible listed equity / equity-oriented fund LTCG is modeled at 12.5% above the remaining ₹1.25 lakh annual exemption for transfers on or after 23 July 2024.
-- ELSS is shown as a Section 80C planning input with a 3-year lock-in reminder and old-tax-regime context.
+## Notes
 
-## Sources
-
-- [SEBI caution on registered investment advisers and research analysts](https://www.sebi.gov.in/media/press-releases/jun-2016/sebi-cautions-public-to-deal-with-only-sebi-registered-investment-advisers-and-research-analysts_32627.html)
-- [SEBI investor caution materials](https://investor.sebi.gov.in/cautiontoinvestor.html)
-- [Income-tax Act Section 112A](https://www.incometaxindia.gov.in/w/section-112a-59)
-- [PIB: Budget 2024 capital gains update](https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2035596)
-
-## Important disclaimer
-
-Mutual fund and securities market investments are subject to market risks. Read all scheme and related documents carefully before investing. The tax calculations are simplified and should be checked with a qualified tax professional before making investment or filing decisions.
+The calculations are projection models for a portfolio project. Users can change their answers and immediately see updated charts, goals, and investment splits.
